@@ -75,6 +75,12 @@
   color: #888;
 }
 
+/* The reset above also drops the browser's focus ring, so restore one for keyboard users */
+.gh-announcement-bar :is(a, button):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
 .gh-announcement-bar svg {
   width: 10px;
   height: 10px;

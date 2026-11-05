@@ -95,6 +95,21 @@ describe('Announcement bar', () => {
     expect(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)).toBe(link);
   });
 
+  test('shows a focus ring on the link and close button when tabbing', async () => {
+    mountApp();
+    const el = await shownBar();
+    const link = el.querySelector('a')!;
+    const button = el.querySelector('button')!;
+
+    await userEvent.tab();
+    expect(document.activeElement).toBe(link);
+    expect(getComputedStyle(link).outlineStyle).toBe('solid');
+
+    await userEvent.tab();
+    expect(document.activeElement).toBe(button);
+    expect(getComputedStyle(button).outlineStyle).toBe('solid');
+  });
+
   test('renders nothing when there is no announcement', async () => {
     announcement = { announcement: '', announcement_background: 'dark' };
     mountApp();
