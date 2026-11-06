@@ -5,7 +5,8 @@ export const getFormattedTimestamp = (date: Date): string => {
   const stripTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
   const today = stripTime(now);
-  const yesterday = stripTime(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+  // Step back a calendar day rather than 24 hours, which lands on the wrong day around DST changes
+  const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
 
   const dateWithoutTime = stripTime(date);
 
