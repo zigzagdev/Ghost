@@ -16,9 +16,13 @@ export function Main({ apiUrl }: MainProps) {
       return;
     }
     const getSiteSettings = async () => {
-      const announcement = await api.current.init();
+      try {
+        const announcement = await api.current.init();
 
-      setSiteSettings(announcement);
+        setSiteSettings(announcement);
+      } catch {
+        // Keep the bar hidden rather than surfacing the error on the site
+      }
     };
 
     void getSiteSettings();

@@ -8,7 +8,7 @@ const API_URL = 'https://site.test/members/api/announcement/';
 let container: HTMLElement;
 let announcement: AnnouncementSettings;
 
-function mountApp(props: { previewData?: AnnouncementSettings } = {}) {
+function mountApp(props: { apiUrl?: string; previewData?: AnnouncementSettings } = {}) {
   container = document.createElement('div');
   document.body.appendChild(container);
   render(<App apiUrl={API_URL} {...props} />, container);
@@ -141,6 +141,28 @@ describe('Announcement bar', () => {
 
     const el = await shownBar();
     expect(el.textContent).toBe('Even bigger news');
+  });
+
+  test('renders nothing when the request fails', async () => {
+    const unhandled = vi.fn();
+    window.addEventListener('unhandledrejection', unhandled);
+    vi.mocked(window.fetch).mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    mountApp();
+
+    await vi.waitFor(() => expect(apiCalls()).toHaveLength(1));
+    await effectsFlushed();
+    window.removeEventListener('unhandledrejection', unhandled);
+
+    expect(container.innerHTML).toBe('');
+    expect(unhandled).not.toHaveBeenCalled();
+  });
+
+  test('renders nothing without fetching when there is no API URL', async () => {
+    mountApp({ apiUrl: undefined });
+    await effectsFlushed();
+
+    expect(container.innerHTML).toBe('');
+    expect(window.fetch).not.toHaveBeenCalled();
   });
 
   test('renders preview data without fetching', async () => {

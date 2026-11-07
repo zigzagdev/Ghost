@@ -34,9 +34,11 @@ function setupGhostApi({ apiUrl }: { apiUrl?: string }) {
 
   const announcementSettings = {
     browse(): Promise<AnnouncementResponse> {
-      const url = apiUrl!;
+      if (!apiUrl) {
+        return Promise.reject(new Error('Missing announcement API URL'));
+      }
       return makeRequest({
-        url,
+        url: apiUrl,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

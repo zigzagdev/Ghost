@@ -1,5 +1,9 @@
 import setupGhostApi from '../../src/utils/api';
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 test('calls settings endpoint on init', async () => {
   const fetchSpy = vi.spyOn(window, 'fetch').mockResolvedValueOnce(
     Response.json({
@@ -28,4 +32,13 @@ test('calls settings endpoint on init', async () => {
       body: undefined,
     }),
   );
+});
+
+test('rejects without fetching when there is no API URL', async () => {
+  const fetchSpy = vi.spyOn(window, 'fetch');
+
+  const api = setupGhostApi({});
+
+  await expect(api.init()).rejects.toThrow('Missing announcement API URL');
+  expect(fetchSpy).not.toHaveBeenCalled();
 });
